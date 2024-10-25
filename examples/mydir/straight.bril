@@ -1,0 +1,38 @@
+@main {
+    a: int = const 12; # A
+    b: int = const 34; # B
+    c: int = add a b; # C
+    b: int = add b c; # D
+    b: int = add b b; # E
+    b: int = mul b b; # F
+    print b; # G
+}
+
+#use(A) = {}, def(A) = {a}
+#use(B) = {}, def(B) = {b}
+#use(C) = {a,b}, def(C) = {c}
+#use(D) = {b,c}, def(D) = {b}
+#use(E) = {b}, def(E) = {b}
+#use(F) = {b}, def(F) = {b}
+#use(G) = {b}, def(G) = {}
+#
+#out(G) = {}
+#in(G) = use(G) union (out(G) - def(G)) = {b} union ({} - {}) = {b}
+#
+#out(F) = in(G) = {b}
+#in(F) = use(F) union (out(F) - def(F)) = {b} union ({b} - {b}) = {b}
+#
+#out(E) = in(F) = {b}
+#in(E) = use(E) union (out(E) - def(E)) = {b} union ({b} - {b}) = {b}
+#
+#out(D) = in(E) = {b}
+#in(D) = use(D) union (out(D) - def(D)) = {b,c} union ({b} - {b}) = {b,c}
+#
+#out(C) = in(D) = {b,c}
+#in(C) = use(C) union (out(C) - def(C)) = {a,b} union ({b,c} - {c}) = {a,b}
+#
+#out(B) = in(C) = {a,b}
+#in(B) = use(B) union (out(B) - def(B)) = {} union ({a,b} - {b}) = {a}
+#
+#out(A) = in(B) = {a}
+#in(A) = use(A) union (out(A) - def(A)) = {} union ({a} - {a}) = {}
