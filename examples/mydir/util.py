@@ -1,6 +1,7 @@
 import sys
 import json
 from collections import namedtuple
+import briltxt
 
 Instruction = namedtuple("Instruction", ["uses", "dest", "pos", "instr"])
 
@@ -45,3 +46,9 @@ def flatten(items):
     for item in items:
         result += list(item)
     return result
+
+def read_bril(bril_fname):
+    """
+    Read a bril file and convert to json within python for debugging purposes
+    """
+    return json.loads(briltxt.parse_bril(open(bril_fname, "r").read()))
