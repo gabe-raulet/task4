@@ -7,7 +7,7 @@ Instruction = namedtuple("Instruction", ["uses", "kill", "pos", "instr"])
 def parse_instructions(instrs):
     for pos, instr in enumerate(instrs):
         uses = set(instr.get("args", []))
-        kill = set(instr.get("dest", []))
+        kill = instr.get("dest", None)
         yield Instruction(uses=uses, kill=kill, pos=pos, instr=instr)
 
 def intersect(items):
