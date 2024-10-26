@@ -1,32 +1,6 @@
 import sys
 import json
-from collections import namedtuple
-
-Instruction = namedtuple("Instruction", ["uses", "kill", "pos", "instr"])
-
-def parse_instructions(instrs):
-    for pos, instr in enumerate(instrs):
-        uses = set(instr.get("args", []))
-        kill = instr.get("dest", None)
-        yield Instruction(uses=uses, kill=kill, pos=pos, instr=instr)
-
-def intersect(items):
-    result = set(items[0])
-    for item in items[1:]:
-        result.intersection_update(item)
-    return result
-
-def unionize(items):
-    result = set()
-    for item in items:
-        result.update(item)
-    return result
-
-def flatten(items):
-    result = []
-    for item in items:
-        result += list(item)
-    return result
+import util
 
 def form_blocks(instrs):
     block = []
@@ -74,7 +48,7 @@ def add_entry(blocks):
     Add unique entry block if necessary
     """
     start = get_block_label(blocks[0])
-    if start in unionize([instr.get("labels", []) for instr in flatten(blocks)]):
+    if start in util.unionize([instr.get("labels", []) for instr in util.flatten(blocks)]):
         entry = [{"label": f"pre.{start}"}, {"op": "jmp", "labels": [start]}]
         blocks.insert(0, entry)
 
