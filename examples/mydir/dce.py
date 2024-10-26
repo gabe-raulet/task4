@@ -4,19 +4,18 @@ import util
 import cfg
 import mylive
 
-def ldce_pass(block, live, kill_local=False):
+def ldce_pass(block, live):
     toremove = set()
     for instr in reversed(list(util.parse_instructions(block))):
         if instr.dest:
             if instr.dest not in live:
                 toremove.add(instr.pos)
-            if kill_local: live.discard(instr.dest)
         live |= instr.uses
     return toremove
 
 def ldce(block, live):
     while True:
-        toremove = ldce_pass(block, live, kill_local=False)
+        toremove = ldce_pass(block, live)
         if not toremove: break
         util.remove_instrs(block, toremove)
 

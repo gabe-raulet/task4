@@ -93,7 +93,8 @@ def optimize_terminators(instrs):
             toremove.add(i)
     if instrs[-1].get("op") == "ret" and len(instrs[-1].get("args", [])) == 0:
         toremove.add(len(instrs)-1)
-    instrs[:] = [instr for i, instr in enumerate(instrs) if not i in toremove]
+    util.remove_instrs(instrs, toremove)
+    #  instrs[:] = [instr for i, instr in enumerate(instrs) if not i in toremove]
 
 def main(prog, opt):
     for func in prog["functions"]:
