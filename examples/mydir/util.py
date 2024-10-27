@@ -5,6 +5,9 @@ import briltxt
 
 Instruction = namedtuple("Instruction", ["uses", "dest", "pos", "instr"])
 
+def grab(instr):
+    return instr.get("dest"), instr.get("args"), instr.get("op"), instr.get("value")
+
 def remove_instrs(instrs, toremove):
     """
     Remove all instructions from `instrs` whose position is in `toremove`
