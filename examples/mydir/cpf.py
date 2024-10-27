@@ -44,14 +44,13 @@ def const_analysis(block_map, succs, preds):
     while worklist:
         name = worklist.pop()
         in_ = const_merge(name, const_out, preds)
-        out_ = in_
+        out_ = {}
         block = block_map[name]
         for instr in block:
             d, args, op, v = util.grab(instr)
             if op == "const": out_[d] = (v, instr.get("type"))
-            elif args and set(args).issubset([var for var, val in out_.items() if val]) and op in FOLDABLE_OPS:
-                out_[d] = (FOLDABLE_OPS[op]([out_[arg][0] for arg in args]), instr.get("type"))
-            elif d in out_: del out_[d]
+            elif args and set(args).issubset([var for var, val in in_.items() if val]) and op in FOLDABLE_OPS:
+                out_[d] = (FOLDABLE_OPS[op]([in_[arg][0] for arg in args]), instr.get("type"))
         if in_ != const_in[name] or out_ != const_out[name]:
             const_in[name] = in_
             const_out[name] = out_
