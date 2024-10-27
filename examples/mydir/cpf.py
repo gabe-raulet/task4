@@ -2,7 +2,6 @@ import sys
 import json
 import util
 import cfg
-import dce
 
 """
 Note: FOLODABLE_OPS was copied from lvn.py and modified
@@ -89,9 +88,7 @@ def cpf_blocks(block_map, const_in):
 def cpf(block_map, succs, preds):
     const_in = get_const_in(block_map, succs, preds)
     while cpf_blocks(block_map, const_in):
-        dce.dce(block_map, succs, preds)
         const_in = get_const_in(block_map, succs, preds)
-    dce.dce(block_map, succs, preds)
 
 if __name__ == "__main__":
     prog = json.load(sys.stdin)
