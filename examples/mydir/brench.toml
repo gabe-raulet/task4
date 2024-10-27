@@ -27,5 +27,6 @@ pipeline = [
     # "bril2json",
     # "python ../lvn.py -f -c",
     # "python cpf.py",
+    # "python dce.py",
     # "brili -p {args}",
 # ]

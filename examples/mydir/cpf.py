@@ -48,10 +48,10 @@ def const_analysis(block_map, succs, preds):
         block = block_map[name]
         for instr in block:
             d, args, op, v = util.grab(instr)
-            if op == "const": out_[d] = v
+            if op == "const": out_[d] = (v, instr.get("type"))
             elif args and set(args).issubset([var for var, val in out_.items() if val]) and op in FOLDABLE_OPS:
-                out_[d] = FOLDABLE_OPS[op]([out_[arg] for arg in args])
-            elif d in out_: out_[d] = None
+                out_[d] = (FOLDABLE_OPS[op]([out_[arg][0] for arg in args]), instr.get("type"))
+            elif d in out_: del out_[d]
         if in_ != const_in[name] or out_ != const_out[name]:
             const_in[name] = in_
             const_out[name] = out_
@@ -68,13 +68,13 @@ def cpf_block(block, const):
         dest, args, op, val = util.grab(instr)
         if not dest: continue
         if op == "const":
-            const[dest] = val
+            const[dest] = (val, instr.get("type"))
         elif set(args).issubset(set(const.keys())) and op in FOLDABLE_OPS:
             changed = True
             instr["op"] = "const"
-            instr["value"] = FOLDABLE_OPS[op]([const[arg] for arg in args])
+            instr["value"] = FOLDABLE_OPS[op]([const[arg][0] for arg in args])
             del instr["args"]
-            const[dest] = instr["value"]
+            const[dest] = (instr["value"], instr.get("type"))
         elif dest in const and op != "const":
             del const[dest]
     return changed
@@ -95,6 +95,10 @@ if __name__ == "__main__":
     for func in prog["functions"]:
         block_map, succs, preds, entry = cfg.init_cfg(func["instrs"])
         cpf(block_map, succs, preds)
+        const_in = get_const_in(block_map, succs, preds)
+        for name, block in block_map.items():
+            for v in const_in[name]:
+                block.insert(0, {"op": "const", "value": const_in[name][v][0], "type": const_in[name][v][1], "dest": v})
         instrs = list(cfg.reassemble(block_map, entry))
         cfg.optimize_terminators(instrs)
         func["instrs"] = instrs
