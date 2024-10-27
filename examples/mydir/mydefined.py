@@ -3,8 +3,7 @@ import json
 import util
 import cfg
 
-def defined(func_cfg):
-    block_map, succs, preds, entry = func_cfg
+def def_analysis(block_map, succs, preds):
     def_in, def_out = {}, {}
     for name, block in block_map.items():
         def_in[name] = set()
@@ -23,9 +22,9 @@ def defined(func_cfg):
 if __name__ == "__main__":
     prog = json.load(sys.stdin)
     for func in prog["functions"]:
-        func_cfg = cfg.init_cfg(func["instrs"])
-        def_in, def_out = defined(func_cfg)
-        for name in func_cfg[0]:
+        block_map, succs, preds, entry = cfg.init_cfg(func["instrs"])
+        def_in, def_out = def_analysis(block_map, succs, preds)
+        for name in block_map:
             in_ = " ".join(sorted([v for v in def_in[name]]))
             out_ = " ".join(sorted([v for v in def_out[name]]))
             print(f"{name}:")

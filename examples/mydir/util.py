@@ -24,6 +24,9 @@ def intersect(items):
     """
     Compute the intersection of the list of iterables `items`
     """
+    if not items:
+        return set()
+
     result = set(items[0])
     for item in items[1:]:
         result.intersection_update(item)
