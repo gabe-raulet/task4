@@ -1,0 +1,117 @@
+@read_input(arr:ptr<int>, v0:int, v1:int, v2:int, v3:int, v4:int, v5:int, v6:int, v7:int, v8:int, v9:int): int {
+    one: int = const 1;
+    p: ptr<int> = id arr;
+    store p v0;
+    p: ptr<int> = ptradd p one;
+    store p v1;
+    p: ptr<int> = ptradd p one;
+    store p v2;
+    p: ptr<int> = ptradd p one;
+    store p v3;
+    p: ptr<int> = ptradd p one;
+    store p v4;
+    p: ptr<int> = ptradd p one;
+    store p v5;
+    p: ptr<int> = ptradd p one;
+    store p v6;
+    p: ptr<int> = ptradd p one;
+    store p v7;
+    p: ptr<int> = ptradd p one;
+    store p v8;
+    p: ptr<int> = ptradd p one;
+    store p v9;
+    i: int = const 0;
+    ten: int = const 10;
+    p: ptr<int> = id arr;
+.header:
+    cond: bool = lt i ten;
+    br cond .body .exit;
+.body:
+    v: int = load p;
+    p: ptr<int> = ptradd p one;
+    zero: int = const 0;
+    done: bool = lt v zero;
+    br done .exit .finish;
+.finish:
+    i: int = add i one;
+    jmp .header;
+.exit:
+    ret i;
+}
+
+@sum_array(arr: ptr<int>, size: int): int {
+    i: int = const 0;
+    sum: int = const 0;
+    one: int = const 1;
+    p: ptr<int> = id arr;
+.header:
+    cond: bool = lt i size;
+    br cond .body .exit;
+.body:
+    v: int = load p;
+    sum: int = add sum v;
+    i: int = add i one;
+    p: ptr<int> = ptradd p one;
+    jmp .header;
+.exit:
+    ret sum;
+}
+
+@bubble_sort(arr: ptr<int>, n: int) {
+    zero: int = const 0;
+    one: int = const 1;
+    i: int = id n;
+.header1:
+    c1: bool = ge i one;
+    br c1 .body1 .exit;
+.body1:
+    j: int = const 0;
+    m: int = sub i one;
+.header2:
+    c2: bool = lt j m;
+    br c2 .body2 .body1.2;
+.body2:
+    p1: ptr<int> = ptradd arr j;
+    p2: ptr<int> = ptradd p1 one;
+    v1: int = load p1;
+    v2: int = load p2;
+    c3: bool = gt v1 v2;
+    br c3 .swap .body2.2;
+.swap:
+    store p1 v2;
+    store p2 v1;
+.body2.2:
+    j: int = add j one;
+    jmp .header2;
+.body1.2:
+    i: int = sub i one;
+    jmp .header1;
+.exit:
+    ret;
+}
+
+@print_array(arr: ptr<int>, n: int) {
+    p: ptr<int> = id arr;
+    i: int = const 0;
+    one: int = const 1;
+.header:
+    cond: bool = lt i n;
+    br cond .body .exit;
+.body:
+    v: int = load p;
+    print v;
+    p: ptr<int> = ptradd p one;
+    i: int = add i one;
+    jmp .header;
+.exit:
+    ret;
+}
+
+@main(v0:int, v1:int, v2:int, v3:int, v4:int, v5:int, v6:int, v7:int, v8:int, v9:int) {
+    ten: int = const 10;
+    arr: ptr<int> = alloc ten;
+    size: int = call @read_input arr v0 v1 v2 v3 v4 v5 v6 v7 v8 v9;
+    call @bubble_sort arr size;
+    call @print_array arr size;
+    free arr;
+}
