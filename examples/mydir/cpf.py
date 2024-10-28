@@ -2,6 +2,7 @@ import sys
 import json
 import util
 import cfg
+import dflow
 
 """
 Note: FOLODABLE_OPS was copied from lvn.py and modified
@@ -24,38 +25,62 @@ FOLDABLE_OPS = {
         "not": lambda args: not args[0]
     }
 
-def const_merge(name, const_out, preds):
+def const_merge(name, succs, preds, const_in, const_out):
     common_vars = util.intersect([const_out[p].keys() for p in preds[name]])
-    const_in = {}
+    in_ = {}
     for v in common_vars:
         s = set()
         for p in preds[name]:
             s.add(const_out[p][v])
         if len(s) == 1:
-            const_in[v] = s.pop()
-    return const_in
+            in_[v] = s.pop()
+    return in_
+
+def const_transfer(block, in_):
+    out_ = {}
+    for instr in block:
+        d, args, op, v = util.grab(instr)
+        if op == "const": out_[d] = (v, instr.get("type"))
+        elif args and set(args).issubset([var for var, val in in_.items() if val]) and op in FOLDABLE_OPS:
+            out_[d] = (FOLDABLE_OPS[op]([in_[arg][0] for arg in args]), instr.get("type"))
+    return out_
+    #  return out_
 
 def const_analysis(block_map, succs, preds):
-    const_in, const_out = {}, {}
-    for name in block_map:
-        const_in[name] = dict()
-        const_out[name] = dict()
-    worklist = set(block_map.keys())
-    while worklist:
-        name = worklist.pop()
-        in_ = const_merge(name, const_out, preds)
-        out_ = {}
-        block = block_map[name]
-        for instr in block:
-            d, args, op, v = util.grab(instr)
-            if op == "const": out_[d] = (v, instr.get("type"))
-            elif args and set(args).issubset([var for var, val in in_.items() if val]) and op in FOLDABLE_OPS:
-                out_[d] = (FOLDABLE_OPS[op]([in_[arg][0] for arg in args]), instr.get("type"))
-        if in_ != const_in[name] or out_ != const_out[name]:
-            const_in[name] = in_
-            const_out[name] = out_
-            worklist.update(succs[name])
-    return const_in, const_out
+    return dflow.dflow_forward(block_map, succs, preds, dict(), const_merge, const_transfer)
+
+#  def const_merge(name, const_out, preds):
+    #  common_vars = util.intersect([const_out[p].keys() for p in preds[name]])
+    #  const_in = {}
+    #  for v in common_vars:
+        #  s = set()
+        #  for p in preds[name]:
+            #  s.add(const_out[p][v])
+        #  if len(s) == 1:
+            #  const_in[v] = s.pop()
+    #  return const_in
+
+#  def const_analysis(block_map, succs, preds):
+    #  const_in, const_out = {}, {}
+    #  for name in block_map:
+        #  const_in[name] = dict()
+        #  const_out[name] = dict()
+    #  worklist = set(block_map.keys())
+    #  while worklist:
+        #  name = worklist.pop()
+        #  in_ = const_merge(name, const_out, preds)
+        #  out_ = {}
+        #  block = block_map[name]
+        #  for instr in block:
+            #  d, args, op, v = util.grab(instr)
+            #  if op == "const": out_[d] = (v, instr.get("type"))
+            #  elif args and set(args).issubset([var for var, val in in_.items() if val]) and op in FOLDABLE_OPS:
+                #  out_[d] = (FOLDABLE_OPS[op]([in_[arg][0] for arg in args]), instr.get("type"))
+        #  if in_ != const_in[name] or out_ != const_out[name]:
+            #  const_in[name] = in_
+            #  const_out[name] = out_
+            #  worklist.update(succs[name])
+    #  return const_in, const_out
 
 def get_const_in(block_map, succs, preds):
     const_in, const_out = const_analysis(block_map, succs, preds)
