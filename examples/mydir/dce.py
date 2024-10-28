@@ -24,10 +24,19 @@ def dce_block(block, live_in, live_out):
     if changed: block[:] = [instr for i, instr in enumerate(block) if not i in todel]
     return changed
 
+def remove_ids(block_map):
+    for name, block in block_map.items():
+        todel = set()
+        for i, instr in enumerate(block):
+            if instr.get("op") == "id" and instr.get("dest") == instr.get("args", [None])[0]:
+                todel.add(i)
+        block[:] = [instr for i, instr in enumerate(block) if not i in todel]
+
 def dce_blocks(block_map, live_in, live_out):
     changed = False
     for name, block in block_map.items():
         changed |= dce_block(block, live_in[name], live_out[name])
+    remove_ids(block_map)
     return changed
 
 def dce(block_map, succs, preds):

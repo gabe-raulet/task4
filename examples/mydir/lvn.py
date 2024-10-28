@@ -56,7 +56,8 @@ def lvn_block(instrs):
                 table.add_new_value_number(var)
             argnums = table.get_argnums(args)
             instr["args"] = table.get_argvars(argnums)
-            #  if dest: table.clobber_update(dest)
+            if dest and dest in table.var2num:
+                break
             if op == "id":
                 table.add_id_var(dest, args[0])
             elif not op in {"call", "ret", "print"}:

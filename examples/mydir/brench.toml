@@ -8,36 +8,34 @@ pipeline = [
     "brili -p {args}",
 ]
 
-# [runs.dce]
-# pipeline = [
-    # "bril2json",
-    # "python dce.py",
-    # "brili -p {args}",
-# ]
+[runs.dce]
+pipeline = [
+    "bril2json",
+    "python dce.py",
+    "brili -p {args}",
+]
 
-# [runs.cpf]
-# pipeline = [
-    # "bril2json",
-    # "python cpf.py",
-    # "python dce.py",
-    # "brili -p {args}",
-# ]
+[runs.lvn]
+pipeline = [
+    "bril2json",
+    "python lvn.py",
+    "python dce.py",
+    "brili -p {args}",
+]
 
-# [runs.lvn]
-# pipeline = [
-    # "bril2json",
-    # "python lvn.py",
-    # "python dce.py",
-    # "brili -p {args}",
-# ]
+[runs.cpf]
+pipeline = [
+    "bril2json",
+    "python cpf.py",
+    "python dce.py",
+    "brili -p {args}",
+]
 
 [runs.cpf_and_lvn]
 pipeline = [
     "bril2json",
-    "python ../to_ssa.py",
-    "python cpf.py",
     "python lvn.py",
+    "python cpf.py",
     "python dce.py",
-    "python ../from_ssa.py",
     "brili -p {args}",
 ]
