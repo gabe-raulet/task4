@@ -10,6 +10,8 @@ pipeline = [
 [runs.dce]
 pipeline = [
     "bril2json",
+    "python cpf.py",
+    "python lvn.py",
     "python dce.py",
     "brili -p {args}",
 ]
