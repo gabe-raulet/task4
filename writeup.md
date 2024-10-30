@@ -1,5 +1,7 @@
 # Task Four
 
+Note: everything (except this writeup) is in the examples/basic directory.
+
 For my task four implementation, I implemented a version of Steensgaard's algorithm for pointer
 aliasing. I have managed to get it working in the sense that it does the pointer analyis, although
 I have again run out of time to use it for implementing actual optimizations (more on that below).
