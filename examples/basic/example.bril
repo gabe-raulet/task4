@@ -1,0 +1,39 @@
+@func1 {
+    one: int = const 1;
+    p1: ptr<int> = alloc one;
+    p2: ptr<int> = alloc one;
+    p3: ptr<int> = alloc one;
+
+    q1: ptr<ptr<int>> = alloc one;
+    q2: ptr<ptr<int>> = alloc one;
+    q3: ptr<ptr<int>> = alloc one;
+
+    a: ptr<int> = id p1;
+    b: ptr<int> = id p2;
+    c: ptr<int> = id p3;
+
+    x: ptr<int> = load q1;
+    y: ptr<int> = load q2;
+    z: ptr<int> = load q3;
+}
+
+@func2 {
+    one: int = const 1;
+    p1: ptr<int> = alloc one;
+    p2: ptr<int> = alloc one;
+    p3: ptr<int> = alloc one;
+
+    q1: ptr<ptr<int>> = alloc one;
+    q2: ptr<ptr<int>> = alloc one;
+    q3: ptr<ptr<int>> = alloc one;
+
+    a: ptr<int> = id p1;
+    b: ptr<int> = id p2;
+    c: ptr<int> = id p3;
+
+    store a q1;
+
+    x: ptr<int> = load q1;
+    y: ptr<int> = load q2;
+    z: ptr<int> = load q3;
+}

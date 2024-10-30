@@ -1,0 +1,34 @@
+@main(c: int) {
+    one: int = const 1;
+    two: int = const 2;
+    three: int = const 3;
+    x: int = const 4; # 1
+    y: int = const 7; # 2
+.L1:
+    c1: bool = gt x c;
+    br c1 .L4 .L1.A;
+.L1.A:
+    c2: bool = gt y three;
+    br c2 .L2 .L1.B;
+.L1.B:
+    a: int = add x one; # 5
+    y: int = add x two; # 6
+    jmp .L3;
+.L2:
+    y: int = add x one; # 8
+    x: int = add x one; # 9
+.L3:
+    x: int = add x one; # 10
+    jmp .L1;
+.L4:
+    print x;
+    print y;
+}
+
+#gen(1)  = (x,1)    kill(1)  = [(x,9), (x,10)]
+#gen(2)  = (y,2)    kill(2)  = [(y,6), (y,8)]
+#gen(5)  = (a,5)    kill(5)  = []
+#gen(6)  = (y,6)    kill(6)  = [(y,2), (y,8)]
+#gen(8)  = (y,8)    kill(8)  = [(y,2), (y,6)]
+#gen(9)  = (x,9)    kill(9)  = [(x,1), (x,10)]
+#gen(10) = (x,10)   kill(10) = [(x,1), (x,9)]
