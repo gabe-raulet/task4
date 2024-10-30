@@ -7,9 +7,9 @@ pipeline = [
     "brili -p {args}",
 ]
 
-[runs.cfg]
+[runs.dce]
 pipeline = [
     "bril2json",
-    "python cfg.py -t",
+    "python dce.py",
     "brili -p {args}",
 ]

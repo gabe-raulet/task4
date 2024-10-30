@@ -92,6 +92,17 @@ def init_cfg(instrs):
         for dest in block[-1].get("labels", []):
             succs[name].add(dest)
             preds[dest].add(name)
+    dead_blocks = set()
+    for name in block_map:
+        if len(preds[name]) == 0 and name != entry:
+            dead_blocks.add(name)
+    for name in block_map:
+        succs[name] -= dead_blocks
+        preds[name] -= dead_blocks
+    for name in dead_blocks:
+        del succs[name]
+        del preds[name]
+        del block_map[name]
     return block_map, succs, preds, entry
 
 def reassemble(block_map, entry):
